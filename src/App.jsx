@@ -29,7 +29,7 @@ function App() {
           setIsServerStarting(false);
         }
       } catch (error) {
-        console.log("Health check failed:", error);
+        console.error("Health check failed:", error);
       }
     };
 

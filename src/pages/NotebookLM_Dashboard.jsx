@@ -20,8 +20,6 @@ export default function HomePage() {
   const [notebooks, setNotebooks] = useState(null);
   const [creating, setCreating] = useState(false);
 
-  console.log(notebooks);
-
   useEffect(() => {
     listNotebooks().then(setNotebooks);
   }, []);
@@ -31,7 +29,7 @@ export default function HomePage() {
     setCreating(true);
     try {
       const nb = await createNotebook("Untitled Notebook");
-      navigate(`/marginal/${nb.conversation_id}`);
+      navigate(`/${nb.conversation_id}`);
     } catch {
       setCreating(false);
     }

@@ -93,14 +93,14 @@ export default function AddSourceIntake({ onAddSource, onClose }) {
             <p className="font-(family-name:--font-display) text-lg mb-1">
               or add your files
             </p>
-            <p className="text-xs text-[var(--ink-soft)] font-[family-name:var(--font-mono)]">
+            <p className="text-xs text-(--ink-soft) font-mono">
               pdf, docs, audio, websites, and more
             </p>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-2.5">
-            <label className="inline-flex items-center gap-2 rounded-full border border-[var(--rule)] bg-[var(--paper-raised)] px-4 py-2 text-sm hover:border-[var(--binding-soft)] cursor-pointer transition-colors">
-              <Upload size={14} className="text-[var(--binding)]" />
+            <label className="inline-flex items-center gap-2 rounded-full border border-(--rule) bg-(--paper-raised) px-4 py-2 text-sm hover:border-(--binding-soft) cursor-pointer transition-colors">
+              <Upload size={14} className="text-(--binding)" />
               Upload files
               <input
                 type="file"
@@ -115,11 +115,11 @@ export default function AddSourceIntake({ onAddSource, onClose }) {
               onClick={() => setMode(mode === "url" ? null : "url")}
               className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors cursor-pointer ${
                 mode === "url"
-                  ? "border-[var(--binding)] bg-[var(--paper-raised)]"
-                  : "border-[var(--rule)] bg-[var(--paper-raised)] hover:border-[var(--binding-soft)]"
+                  ? "border-(--binding) bg-(--paper-raised)"
+                  : "border-(--rule) bg-(--paper-raised) hover:border-(--binding-soft)"
               }`}
             >
-              <LinkIcon size={14} className="text-[var(--binding)]" />
+              <LinkIcon size={14} className="text-(--binding)" />
               Website link
             </button>
 
@@ -127,11 +127,11 @@ export default function AddSourceIntake({ onAddSource, onClose }) {
               onClick={() => setMode(mode === "paste" ? null : "paste")}
               className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors cursor-pointer ${
                 mode === "paste"
-                  ? "border-[var(--binding)] bg-[var(--paper-raised)]"
-                  : "border-[var(--rule)] bg-[var(--paper-raised)] hover:border-[var(--binding-soft)]"
+                  ? "border-(--binding) bg-(--paper-raised)"
+                  : "border-(--rule) bg-(--paper-raised) hover:border-(--binding-soft)"
               }`}
             >
-              <FileText size={14} className="text-[var(--binding)]" />
+              <FileText size={14} className="text-(--binding)" />
               Paste text
             </button>
           </div>
@@ -146,7 +146,7 @@ export default function AddSourceIntake({ onAddSource, onClose }) {
                   onChange={(e) => setFieldValue(e.target.value)}
                   placeholder="Paste your text here…"
                   rows={4}
-                  className="w-full rounded-sm border border-[var(--rule)] bg-[var(--paper-raised)] px-3 py-2 text-sm mb-2 focus:outline-2 focus:outline-[var(--binding)] resize-none"
+                  className="w-full rounded-sm border border-(--rule) bg-(--paper-raised) px-3 py-2 text-sm mb-2 focus:outline-2 focus:outline-(--binding) resize-none"
                 />
               ) : (
                 <input
@@ -159,13 +159,13 @@ export default function AddSourceIntake({ onAddSource, onClose }) {
                       ? "YouTube video URL"
                       : "https://example.com/article"
                   }
-                  className="w-full rounded-sm border border-(--rule) bg-(--paper-raised) px-3 py-2 text-sm mb-2 focus:outline-2 focus:outline-[var(--binding)]"
+                  className="w-full rounded-sm border border-(--rule) bg-(--paper-raised) px-3 py-2 text-sm mb-2 focus:outline-2 focus:outline-(--binding)"
                 />
               )}
               <button
                 onClick={submitField}
                 disabled={!fieldValue.trim()}
-                className="w-full rounded-sm bg-[var(--ink)] text-[var(--paper)] py-2 text-sm font-medium hover:bg-[var(--binding)] disabled:opacity-50 cursor-pointer transition-colors"
+                className="w-full rounded-sm bg-(--ink) text-(--paper) py-2 text-sm font-medium hover:bg-(--binding) disabled:opacity-50 cursor-pointer transition-colors"
               >
                 Add source
               </button>

@@ -83,7 +83,6 @@ export default function NotebookPage() {
   }
 
   const handleAddSource = useCallback(async (query) => {
-    console.log("Handle Add Source called....");
     setShowIntake(false);
     setAddingSource(true);
     setSending(true);
@@ -199,7 +198,6 @@ export default function NotebookPage() {
 
   useEffect(() => {
     if (!ready) return;
-    console.log("Ready: ", ready);
     const initialSourceQuery = searchParams.get("addSource");
     if (!initialSourceQuery || handledInitialAddRef.current) return;
 
@@ -362,7 +360,7 @@ export default function NotebookPage() {
       try {
         const notebook = await createNotebook("Untitled Notebook");
         const nextNotebookId = notebook.conversation_id || notebook.id;
-        const nextUrl = `/marginal/${nextNotebookId}?addSource=${encodeURIComponent(
+        const nextUrl = `/${nextNotebookId}?addSource=${encodeURIComponent(
           topic,
         )}`;
 
@@ -410,8 +408,6 @@ export default function NotebookPage() {
             } catch {
               continue;
             }
-
-            console.log("EventType: ", eventType);
 
             switch (eventType) {
               case "query_rewritten":
