@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { ArrowLeft, BookOpen, Pencil } from "lucide-react";
+import { ArrowLeft, BookOpen, Columns3, Pencil } from "lucide-react";
 import {
   addSource,
   createNotebook,
@@ -47,6 +47,7 @@ export default function NotebookPage() {
   const titleInputRef = useRef(null);
 
   const [showIntake, setShowIntake] = useState(false);
+  const [mobileSourcesOpen, setMobileSourcesOpen] = useState(false);
 
   const [ready, setReady] = useState(false);
 
@@ -551,7 +552,7 @@ export default function NotebookPage() {
               className="text-(--binding)"
             />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             {notebook ? (
               editingTitle ? (
                 <input
@@ -585,10 +586,31 @@ export default function NotebookPage() {
               <div className="h-4 w-40 bg-(--card-stock)/50 rounded animate-pulse" />
             )}
           </div>
+          <button
+            onClick={() => setMobileSourcesOpen((open) => !open)}
+            className="lg:hidden w-8 h-8 rounded-sm border border-(--rule) flex items-center justify-center hover:bg-(--card-stock)/50 transition-colors shrink-0"
+            title="Toggle sources"
+            aria-label="Toggle sources"
+            aria-pressed={mobileSourcesOpen}
+          >
+            <Columns3 size={15} />
+          </button>
         </div>
       </header>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[260px_1fr_300px] overflow-hidden">
+      <div className="relative flex-1 grid grid-cols-1 lg:grid-cols-[260px_1fr_300px] overflow-hidden">
+        {mobileSourcesOpen && (
+          <div className="lg:hidden absolute inset-0 z-30 border-r border-(--rule) bg-(--paper-raised)">
+            <SourceRail
+              sources={sources}
+              selectedurls={selectedurls}
+              onToggleSelect={toggleSelect}
+              onAddSource={handleAddSource}
+              onDeleteSource={handleDeleteSource}
+            />
+          </div>
+        )}
+
         <div className="hidden lg:block border-r border-(--rule) overflow-hidden bg-(--paper-raised)/40">
           <SourceRail
             sources={sources}
