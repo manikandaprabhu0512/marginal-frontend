@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "destination": "https://marginal-backend-s979.onrender.com/:path*"
+    }
+  ]
+}
