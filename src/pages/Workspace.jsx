@@ -225,7 +225,7 @@ export default function NotebookPage() {
       notebookId,
       role: "user",
       content: query,
-      files: files,
+      file_url: files[0] ? URL.createObjectURL(files[0]) : null,
       createdAt: new Date().toISOString(),
     };
     setMessages((prev) => [...prev, optimisticUser]);

@@ -25,6 +25,7 @@ export default function ChatPanel({
   const [files, setFiles] = useState([]);
   const fileInputRef = useRef(null);
   const [isAnimated, setIsAnimated] = useState(false);
+  const [previewPdfUrl, setPreviewPdfUrl] = useState(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({
@@ -40,6 +41,15 @@ export default function ChatPanel({
 
     return () => clearTimeout(timer);
   }, [status]);
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === "Escape") setPreviewPdfUrl(null);
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   function submit() {
     if (!input.trim() || sending) return;
@@ -187,54 +197,18 @@ export default function ChatPanel({
                   </div>
                 )}
 
-                {m.role === "user" && m.files && m.files.length > 0 && (
+                {m.role === "user" && m.file_url && (
                   <div className="flex flex-wrap gap-2 mb-2 justify-end">
-                    {m.files.map((file, index) => {
-                      const ext = file.name?.split(".").pop()?.toLowerCase();
-                      const isImage = [
-                        "jpg",
-                        "jpeg",
-                        "png",
-                        "gif",
-                        "webp",
-                      ].includes(ext);
-
+                    {[m.file_url].map((fileUrl, index) => {
                       return (
                         <div key={index}>
-                          {isImage ? (
-                            // Images — show actual preview
-                            <div className="w-32 h-32 rounded-sm overflow-hidden border border-(--card-stock-line)">
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt={file.name}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          ) : ext === "pdf" ? (
-                            // PDF — canvas preview
-                            <div className="w-32 h-32 rounded-sm overflow-hidden border border-(--card-stock-line) bg-(--card-stock)">
-                              <PdfPreview file={file} />
-                            </div>
-                          ) : (
-                            // Other docs — clean card with icon
-                            <div className="flex items-center gap-2.5 rounded-sm border border-(--card-stock-line) bg-(--card-stock) px-3 py-2.5 max-w-50">
-                              <div className="w-8 h-8 rounded-sm bg-(--paper-raised) border border-(--rule) flex items-center justify-center shrink-0">
-                                <FileText
-                                  size={16}
-                                  className="text-(--binding)"
-                                  strokeWidth={1.5}
-                                />
-                              </div>
-                              <div className="min-w-0">
-                                <p className="text-xs font-medium text-(--ink) truncate leading-tight">
-                                  {file.name}
-                                </p>
-                                <p className="font-mono text-[10px] text-(--ink-soft) uppercase mt-0.5">
-                                  {ext}
-                                </p>
-                              </div>
-                            </div>
-                          )}
+                          <button
+                            onClick={() => setPreviewPdfUrl(fileUrl)}
+                            className="w-32 h-32 rounded-sm overflow-hidden border border-(--card-stock-line) bg-(--card-stock) cursor-pointer"
+                            title="Preview PDF"
+                          >
+                            <PdfPreview file_url={fileUrl} />
+                          </button>
                         </div>
                       );
                     })}
@@ -290,6 +264,29 @@ export default function ChatPanel({
           </div>
         )}
       </div>
+
+      {previewPdfUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 py-8"
+          onClick={() => setPreviewPdfUrl(null)}
+        >
+          <div
+            className="relative w-[min(92vw,820px)] h-[min(82vh,720px)] rounded-sm border border-(--rule) bg-(--paper-raised) shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setPreviewPdfUrl(null)}
+              className="absolute right-3 top-3 z-10 w-8 h-8 rounded-sm bg-(--ink) text-(--paper) flex items-center justify-center hover:bg-(--binding) cursor-pointer transition-colors"
+              title="Close preview"
+            >
+              <X size={14} />
+            </button>
+            <div className="h-full overflow-auto p-4">
+              <PdfPreview file_url={previewPdfUrl} scale={1.4} />
+            </div>
+          </div>
+        </div>
+      )}
 
       <div
         onDrop={handleDrop}
