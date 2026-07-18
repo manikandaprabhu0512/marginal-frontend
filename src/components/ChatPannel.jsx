@@ -7,6 +7,7 @@ import {
   PaperclipIcon,
   CircleHelp,
 } from "lucide-react";
+import { PdfPreview } from "./PDFCard";
 
 export default function ChatPanel({
   messages,
@@ -185,6 +186,61 @@ export default function ChatPanel({
                     Answer
                   </div>
                 )}
+
+                {m.role === "user" && m.files && m.files.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-2 justify-end">
+                    {m.files.map((file, index) => {
+                      const ext = file.name?.split(".").pop()?.toLowerCase();
+                      const isImage = [
+                        "jpg",
+                        "jpeg",
+                        "png",
+                        "gif",
+                        "webp",
+                      ].includes(ext);
+
+                      return (
+                        <div key={index}>
+                          {isImage ? (
+                            // Images — show actual preview
+                            <div className="w-32 h-32 rounded-sm overflow-hidden border border-(--card-stock-line)">
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt={file.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ) : ext === "pdf" ? (
+                            // PDF — canvas preview
+                            <div className="w-32 h-32 rounded-sm overflow-hidden border border-(--card-stock-line) bg-(--card-stock)">
+                              <PdfPreview file={file} />
+                            </div>
+                          ) : (
+                            // Other docs — clean card with icon
+                            <div className="flex items-center gap-2.5 rounded-sm border border-(--card-stock-line) bg-(--card-stock) px-3 py-2.5 max-w-50">
+                              <div className="w-8 h-8 rounded-sm bg-(--paper-raised) border border-(--rule) flex items-center justify-center shrink-0">
+                                <FileText
+                                  size={16}
+                                  className="text-(--binding)"
+                                  strokeWidth={1.5}
+                                />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-xs font-medium text-(--ink) truncate leading-tight">
+                                  {file.name}
+                                </p>
+                                <p className="font-mono text-[10px] text-(--ink-soft) uppercase mt-0.5">
+                                  {ext}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
                 <div
                   className={
                     m.role === "user"
