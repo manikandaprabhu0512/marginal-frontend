@@ -1,13 +1,12 @@
 import { useState } from "react";
 import {
+  Columns3,
   FileText,
   Link as LinkIcon,
   Mic,
   Video,
   File,
-  Plus,
   Trash2,
-  X,
 } from "lucide-react";
 
 const TYPE_ICON = {
@@ -25,18 +24,9 @@ export default function SourceRail({
   onToggleSelect,
   onAddSource,
   onDeleteSource,
+  onToggleRail,
 }) {
-  const [showAdd, setShowAdd] = useState(false);
-  const [addTitle, setAddTitle] = useState("");
-  const [addType, setAddType] = useState();
   const [dragActive, setDragActive] = useState(false);
-
-  function submitAdd() {
-    if (!addTitle.trim()) return;
-    onAddSource(addTitle.trim(), addType);
-    setAddTitle("");
-    setShowAdd(false);
-  }
 
   function getFileType(fileName) {
     const ext = fileName.split(".").pop()?.toLowerCase();
@@ -88,56 +78,14 @@ export default function SourceRail({
       <div className="flex items-center justify-between px-4 py-3 border-b border-(--rule)">
         <h2 className="font-(family-name:--font-display) text-base">Sources</h2>
         <button
-          onClick={() => setShowAdd(true)}
+          onClick={onToggleRail}
           className="w-7 h-7 rounded-sm border border-(--rule) flex items-center justify-center hover:bg-(--card-stock)/50 cursor-pointer transition-colors"
-          title="Add source"
+          title="Toggle sources"
+          aria-label="Toggle sources"
         >
-          <Plus size={14} />
+          <Columns3 size={14} />
         </button>
       </div>
-
-      {showAdd && (
-        <div className="px-4 py-3 border-b border-(--rule) bg-(--card-stock)/30">
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-mono text-[11px] uppercase tracking-wide text-(--ink-soft)">
-              Add source
-            </span>
-            <button
-              onClick={() => setShowAdd(false)}
-              className="cursor-pointer text-(--ink-soft) hover:text-(--ink)"
-            >
-              <X size={14} />
-            </button>
-          </div>
-          <select
-            value={addType}
-            onChange={(e) => setAddType(e.target.value)}
-            className="w-full mb-2 rounded-sm border border-(--rule) bg-(--paper-raised) px-2 py-1.5 text-sm focus:outline-2 focus:outline-(--binding)"
-          >
-            <option value="url">Website link</option>
-            <option value="pdf">PDF document</option>
-            <option value="doc">Document</option>
-            <option value="txt">Pasted text</option>
-            <option value="audio">Audio file</option>
-            <option value="youtube">YouTube video</option>
-          </select>
-          <input
-            autoFocus
-            value={addTitle}
-            onChange={(e) => setAddTitle(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && submitAdd()}
-            placeholder="Title or URL"
-            className="w-full rounded-sm border border-(--rule) bg-(--paper-raised) px-2 py-1.5 text-sm mb-2 focus:outline-2 focus:outline-(--binding)"
-          />
-          <button
-            onClick={submitAdd}
-            disabled={!addTitle.trim()}
-            className="w-full rounded-sm bg-(--ink) text-(--paper) py-1.5 text-sm font-medium hover:bg-(--binding) disabled:opacity-50 cursor-pointer transition-colors"
-          >
-            Add
-          </button>
-        </div>
-      )}
 
       <div
         onDragEnter={() => setDragActive(true)}
@@ -151,17 +99,11 @@ export default function SourceRail({
           dragActive ? "bg-(--card-stock)/60" : ""
         }`}
       >
-        {sources.length === 0 && !showAdd && (
+        {sources.length === 0 && (
           <div className="text-center py-10 px-2">
             <p className="text-sm text-(--ink-soft) mb-3">
               No sources yet. Add a document, link, or recording to get started.
             </p>
-            <button
-              onClick={() => setShowAdd(true)}
-              className="text-sm text-(--binding) underline hover:text-(--highlight) cursor-pointer"
-            >
-              Add your first source
-            </button>
           </div>
         )}
 

@@ -16,7 +16,7 @@ import {
 } from "../components/NotebookAPI";
 import SourceRail from "../components/SourceRail";
 import ChatPanel from "../components/ChatPannel";
-import StudioPanel from "../components/StudioPannel";
+// import StudioPanel from "../components/StudioPannel";
 import AddSourceIntake from "../components/SourceIntake";
 import { streamAnswer } from "../utils/stream_answer";
 
@@ -47,7 +47,7 @@ export default function NotebookPage() {
   const titleInputRef = useRef(null);
 
   const [showIntake, setShowIntake] = useState(false);
-  const [mobileSourcesOpen, setMobileSourcesOpen] = useState(false);
+  const [sourcesOpen, setSourcesOpen] = useState(true);
 
   const [ready, setReady] = useState(false);
 
@@ -587,20 +587,15 @@ export default function NotebookPage() {
               <div className="h-4 w-40 bg-(--card-stock)/50 rounded animate-pulse" />
             )}
           </div>
-          <button
-            onClick={() => setMobileSourcesOpen((open) => !open)}
-            className="lg:hidden w-8 h-8 rounded-sm border border-(--rule) flex items-center justify-center hover:bg-(--card-stock)/50 transition-colors shrink-0"
-            title="Toggle sources"
-            aria-label="Toggle sources"
-            aria-pressed={mobileSourcesOpen}
-          >
-            <Columns3 size={15} />
-          </button>
         </div>
       </header>
 
-      <div className="relative flex-1 grid grid-cols-1 lg:grid-cols-[260px_1fr_300px] overflow-hidden">
-        {mobileSourcesOpen && (
+      <div
+        className={`relative flex-1 grid grid-cols-1 ${
+          sourcesOpen ? "lg:grid-cols-[1fr_4fr]" : "lg:grid-cols-1"
+        } overflow-hidden`}
+      >
+        {sourcesOpen && (
           <div className="lg:hidden absolute inset-0 z-30 border-r border-(--rule) bg-(--paper-raised)">
             <SourceRail
               sources={sources}
@@ -608,19 +603,23 @@ export default function NotebookPage() {
               onToggleSelect={toggleSelect}
               onAddSource={handleAddSource}
               onDeleteSource={handleDeleteSource}
+              onToggleRail={() => setSourcesOpen((open) => !open)}
             />
           </div>
         )}
 
-        <div className="hidden lg:block border-r border-(--rule) overflow-hidden bg-(--paper-raised)/40">
-          <SourceRail
-            sources={sources}
-            selectedurls={selectedurls}
-            onToggleSelect={toggleSelect}
-            onAddSource={handleAddSource}
-            onDeleteSource={handleDeleteSource}
-          />
-        </div>
+        {sourcesOpen && (
+          <div className="hidden lg:block border-r border-(--rule) overflow-hidden bg-(--paper-raised)/40">
+            <SourceRail
+              sources={sources}
+              selectedurls={selectedurls}
+              onToggleSelect={toggleSelect}
+              onAddSource={handleAddSource}
+              onDeleteSource={handleDeleteSource}
+              onToggleRail={() => setSourcesOpen((open) => !open)}
+            />
+          </div>
+        )}
 
         <div className="overflow-hidden">
           <ChatPanel
@@ -633,10 +632,13 @@ export default function NotebookPage() {
             onHITLQuestion={handleHITLQuestion}
             onDismissQuestion={handleDismissQuestion}
             onSend={handleSend}
+            open={open}
+            sourcesOpen={sourcesOpen}
+            setSourcesOpen={setSourcesOpen}
           />
         </div>
 
-        <div className="hidden lg:block border-l border-(--rule) overflow-hidden bg-(--paper-raised)/40">
+        {/* <div className="hidden lg:block border-l border-(--rule) overflow-hidden bg-(--paper-raised)/40">
           <StudioPanel
             artifacts={artifacts}
             loading={artifactsLoading}
@@ -645,7 +647,7 @@ export default function NotebookPage() {
             onGenerate={handleGenerate}
             onDelete={handleDeleteArtifact}
           />
-        </div>
+        </div> */}
       </div>
 
       {/* Mobile: sources & studio collapse into tabs below chat would go here if needed */}
