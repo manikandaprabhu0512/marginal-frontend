@@ -32,6 +32,8 @@ export default function ChatPanel({
   const [isAnimated, setIsAnimated] = useState(false);
   const [previewPdfUrl, setPreviewPdfUrl] = useState(null);
 
+  console.log("Files: ", files);
+
   // Auto-scroll to bottom on new messages
   useEffect(() => {
     scrollRef.current?.scrollTo({
@@ -40,7 +42,6 @@ export default function ChatPanel({
     });
   }, [messages, sending]);
 
-  // Status animation — slide up on first, fade pulse after 2s
   useEffect(() => {
     setIsAnimated(false);
     const timer = setTimeout(() => setIsAnimated(true), 2000);
@@ -69,11 +70,14 @@ export default function ChatPanel({
   }
 
   function handleAddFileClick() {
-    fileInputRef.current?.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   }
 
   function handleFileChange(e) {
-    setFiles((prev) => [...prev, ...Array.from(e.target.files)]);
+    const selectedFiles = Array.from(e.target.files);
+    setFiles((prev) => [...prev, ...selectedFiles]);
     e.target.value = null;
   }
 
@@ -224,51 +228,6 @@ export default function ChatPanel({
                           <PdfPreview file_url={fileUrl} />
                         </button>
                       ))}
-                    </div>
-                  )}
-
-                  {/* In-memory file previews (current session) */}
-                  {m.role === "user" && m.files && m.files.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-2 justify-end">
-                      {m.files.map((file, index) => {
-                        const ext = file.name?.split(".").pop()?.toLowerCase();
-                        const isImage = [
-                          "jpg",
-                          "jpeg",
-                          "png",
-                          "gif",
-                          "webp",
-                        ].includes(ext);
-                        const isPdf = ext === "pdf";
-
-                        return (
-                          <div
-                            key={index}
-                            className="w-20 h-20 rounded-sm border border-(--card-stock-line) bg-(--card-stock) overflow-hidden shrink-0"
-                          >
-                            {isImage ? (
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt={file.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : isPdf ? (
-                              <PdfPreview file={file} />
-                            ) : (
-                              <div className="w-full h-full flex flex-col items-center justify-center gap-1 px-2">
-                                <FileText
-                                  size={18}
-                                  className="text-(--binding)"
-                                  strokeWidth={1.5}
-                                />
-                                <span className="font-mono text-[9px] text-(--ink-soft) text-center line-clamp-2 break-all">
-                                  {file.name}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
                     </div>
                   )}
 
@@ -443,6 +402,7 @@ export default function ChatPanel({
                     "gif",
                     "webp",
                   ].includes(ext);
+                  const preview = isImage ? URL.createObjectURL(file) : null;
 
                   return (
                     <div
@@ -451,7 +411,7 @@ export default function ChatPanel({
                     >
                       {isImage ? (
                         <img
-                          src={URL.createObjectURL(file)}
+                          src={preview}
                           alt={file.name}
                           className="w-full h-full object-cover"
                         />

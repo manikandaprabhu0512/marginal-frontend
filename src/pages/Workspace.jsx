@@ -220,15 +220,31 @@ export default function NotebookPage() {
   async function handleSend(query, files) {
     setHitlQuestion(null);
     setSending(true);
+    setStatus("Loading...");
+    const uploadedFiles = files.map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+    }));
     const optimisticUser = {
       id: `tmp-${Date.now()}`,
       notebookId,
       role: "user",
       content: query,
-      file_url: files[0] ? URL.createObjectURL(files[0]) : null,
+      file_url: uploadedFiles[0]?.url || null,
       createdAt: new Date().toISOString(),
     };
     setMessages((prev) => [...prev, optimisticUser]);
+    if (uploadedFiles.length > 0) {
+      const newSources = uploadedFiles.map(({ file, url }) => ({
+        _id: crypto.randomUUID(),
+        notebookId,
+        source_type:
+          file.name.split(".").pop()?.toLowerCase() === "pdf" ? "pdf" : "doc",
+        title: file.name,
+        url,
+      }));
+      setSources((prev) => [...prev, ...newSources]);
+    }
     try {
       const response = await sendMessage(
         notebookId,
@@ -265,6 +281,18 @@ export default function NotebookPage() {
             switch (eventType) {
               case "fetching_history":
                 setStatus("Fetching history...");
+                break;
+
+              case "uploading_files":
+                setStatus("Uploading Files...");
+                break;
+
+              case "file_stored":
+                setStatus("File Stored...");
+                break;
+
+              case "sources_saved":
+                setStatus("Sources Saved...");
                 break;
 
               case "understanding_query":
