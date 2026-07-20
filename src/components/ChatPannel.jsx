@@ -296,7 +296,7 @@ export default function ChatPanel({
                                 language={match[1]}
                                 PreTag="div"
                                 customStyle={{
-                                  background: "var(--card-stock)",
+                                  background: "var(--code-bg)",
                                   borderRadius: "2px",
                                   padding: "12px",
                                   fontSize: "13px",
@@ -312,7 +312,7 @@ export default function ChatPanel({
                               </SyntaxHighlighter>
                             ) : (
                               <code
-                                className="font-mono text-sm bg-(--card-stock) px-1.5 py-0.5 rounded"
+                                className="font-mono text-sm bg-(--code-bg) px-1.5 py-0.5 rounded"
                                 {...props}
                               >
                                 {children}
@@ -320,7 +320,7 @@ export default function ChatPanel({
                             );
                           },
                           pre: ({ children }) => (
-                            <pre className="font-mono text-sm bg-(--card-stock) rounded-sm p-3 mb-3 overflow-x-auto">
+                            <pre className="font-mono text-sm bg-(--code-bg) rounded-sm p-3 mb-3 overflow-x-auto">
                               {children}
                             </pre>
                           ),
