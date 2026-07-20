@@ -32,6 +32,7 @@ export default function ChatPanel({
   const fileInputRef = useRef(null);
   const [isAnimated, setIsAnimated] = useState(false);
   const [previewPdfUrl, setPreviewPdfUrl] = useState(null);
+  const textareaRef = useRef(null);
 
   console.log("Files: ", files);
 
@@ -63,6 +64,9 @@ export default function ChatPanel({
     onSend(input.trim(), files);
     setInput("");
     setFiles([]);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
   }
 
   function autoResize(el) {
@@ -493,6 +497,7 @@ export default function ChatPanel({
                 style={{ display: "none" }}
               />
               <textarea
+                ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
