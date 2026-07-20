@@ -47,7 +47,9 @@ export default function NotebookPage() {
   const titleInputRef = useRef(null);
 
   const [showIntake, setShowIntake] = useState(false);
-  const [sourcesOpen, setSourcesOpen] = useState(true);
+  const [sourcesOpen, setSourcesOpen] = useState(
+    () => window.innerWidth >= 1024,
+  );
 
   const [ready, setReady] = useState(false);
 
