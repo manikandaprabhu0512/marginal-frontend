@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import NotebookLM_Dashboard from "./pages/NotebookLM_Dashboard";
 import NotebookPage from "./pages/Workspace";
+import ErrorPage from "./pages/ErrorPage";
 import axios from "axios";
 
 function App() {
@@ -78,7 +79,9 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<NotebookLM_Dashboard />} />
+      <Route path="/error" element={<ErrorPage />} />
       <Route path="/:id" element={<NotebookPage />} />
+      <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
 }

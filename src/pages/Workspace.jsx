@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, BookOpen, Columns3, Pencil } from "lucide-react";
 import {
   addSource,
@@ -22,6 +22,7 @@ import { streamAnswer } from "../utils/stream_answer";
 
 export default function NotebookPage() {
   const params = useParams();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const notebookId = params.id;
   const handledInitialAddRef = useRef(false);
@@ -53,6 +54,15 @@ export default function NotebookPage() {
 
   const [ready, setReady] = useState(false);
 
+  const redirectToError = useCallback((error, fallback = "Something went wrong.") => {
+    const message =
+      typeof error === "string" ? error : error?.message || fallback;
+    navigate(`/error?message=${encodeURIComponent(message)}`, {
+      replace: true,
+      state: { message },
+    });
+  }, [navigate]);
+
   useEffect(() => {
     Promise.all([
       getNotebook(notebookId).then(setNotebook),
@@ -73,8 +83,10 @@ export default function NotebookPage() {
         setArtifacts(a);
         setArtifactsLoading(false);
       }),
-    ]).then(() => setReady(true));
-  }, [notebookId]);
+    ])
+      .then(() => setReady(true))
+      .catch((err) => redirectToError(err, "Could not load this workspace."));
+  }, [notebookId, redirectToError]);
 
   function toggleSelect(url) {
     setSelectedurls((prev) => {
@@ -187,17 +199,24 @@ export default function NotebookPage() {
                 );
                 break;
 
+              case "error":
+                redirectToError(data.message, "Something went wrong.");
+                break;
+
               case "done":
                 break;
             }
           }
         }
       }
+    } catch (err) {
+      console.error("SSE error:", err);
+      redirectToError(err, "Connection failed while adding a source.");
     } finally {
       setAddingSource(false);
       setSending(false);
     }
-  });
+  }, [notebookId, redirectToError]);
 
   useEffect(() => {
     if (!ready) return;
@@ -357,14 +376,7 @@ export default function NotebookPage() {
                 break;
 
               case "error":
-                setStatus(`Error: ${data.message}`);
-                setMessages((prev) =>
-                  prev.filter(
-                    (m) =>
-                      m.id !== optimisticUser.id &&
-                      m.id !== optimisticAssistant.id,
-                  ),
-                );
+                redirectToError(data.message, "Something went wrong.");
                 break;
 
               case "done":
@@ -376,6 +388,7 @@ export default function NotebookPage() {
       }
     } catch (err) {
       console.error("SSE error:", err);
+      redirectToError(err, "Connection failed while receiving the response.");
     } finally {
       setSending(false);
     }
@@ -403,7 +416,7 @@ export default function NotebookPage() {
         }
       } catch (err) {
         console.error("Create notebook from HITL failed:", err);
-        setStatus("Could not create notebook.");
+        redirectToError(err, "Could not create notebook.");
         newNotebookTab?.close();
       } finally {
         setSending(false);
@@ -500,14 +513,7 @@ export default function NotebookPage() {
                 break;
 
               case "error":
-                setStatus(`Error: ${data.message}`);
-                setMessages((prev) =>
-                  prev.filter(
-                    (m) =>
-                      m.id !== optimisticUser.id &&
-                      m.id !== optimisticAssistant.id,
-                  ),
-                );
+                redirectToError(data.message, "Something went wrong.");
                 break;
 
               case "done":
@@ -519,6 +525,7 @@ export default function NotebookPage() {
       }
     } catch (err) {
       console.error("SSE error:", err);
+      redirectToError(err, "Connection failed while receiving the response.");
     } finally {
       setSending(false);
     }
