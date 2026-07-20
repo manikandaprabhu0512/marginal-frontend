@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { PdfPreview } from "./PDFCard";
 import Markdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 
 export default function ChatPanel({
   messages,
@@ -280,11 +281,44 @@ export default function ChatPanel({
                               {children}
                             </h3>
                           ),
-                          code: ({ children }) => (
-                            <code className="font-mono text-sm bg-(--card-stock) px-1.5 py-0.5 rounded">
-                              {children}
-                            </code>
-                          ),
+                          code({
+                            node,
+                            inline,
+                            className,
+                            children,
+                            ...props
+                          }) {
+                            const match = /language-(\w+)/.exec(
+                              className || "",
+                            );
+                            return !inline && match ? (
+                              <SyntaxHighlighter
+                                language={match[1]}
+                                PreTag="div"
+                                customStyle={{
+                                  background: "var(--card-stock)",
+                                  borderRadius: "2px",
+                                  padding: "12px",
+                                  fontSize: "13px",
+                                  marginBottom: "12px",
+                                  fontFamily: "monospace",
+                                }}
+                                codeTagProps={{
+                                  style: { fontFamily: "inherit" },
+                                }}
+                                {...props}
+                              >
+                                {String(children).replace(/\n$/, "")}
+                              </SyntaxHighlighter>
+                            ) : (
+                              <code
+                                className="font-mono text-sm bg-(--card-stock) px-1.5 py-0.5 rounded"
+                                {...props}
+                              >
+                                {children}
+                              </code>
+                            );
+                          },
                           pre: ({ children }) => (
                             <pre className="font-mono text-sm bg-(--card-stock) rounded-sm p-3 mb-3 overflow-x-auto">
                               {children}
